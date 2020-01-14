@@ -27,6 +27,7 @@ async function isSyncRequired() {
 }
 
 async function sync(roundParameter) {
+  console.log('syncing data');
   let roundNumber = roundParameter;
   if (!roundParameter) {
     roundNumber = (await axios.get('http://localhost:4000/currentRound')).data;
