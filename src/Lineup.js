@@ -95,22 +95,19 @@ class Lineup {
   _performPositionalSubstitutions() {
     const vacantLineupSlotsCounts = this._getVacantLineupSlotsCount();
     const missingPositions = this._getMissingPositions();
-    const benchedPlayers = this._getBenchedFieldsmans();
-    for (let count = 0; count < vacantLineupSlotsCounts; count++) {
-      const benchedPlayer = benchedPlayers[count];
-      if (missingPositions[benchedPlayer.getPosition()]) {
-        benchedPlayer.callUp();
-      }
-    }
+    this._getBenchedFieldsmans()
+      .filter((playerResult) => missingPositions[playerResult.getPosition()])
+      .filter((playerResult) => playerResult.hasPlayed())
+      .slice(0, vacantLineupSlotsCounts)
+      .forEach((playerResult) => playerResult.callUp());
   }
 
   _performOrderedSubstitutions() {
     const vacantLineupSlotsCounts = this._getVacantLineupSlotsCount();
-    const benchedPlayers = this._getBenchedFieldsmans();
-    const numberOfSubstitutions = Math.min(vacantLineupSlotsCounts, benchedPlayers.length);
-    for (let count = 0; count < numberOfSubstitutions; count++) {
-      benchedPlayers[count].callUp();
-    }
+    this._getBenchedFieldsmans()
+      .filter((playerResult) => playerResult.hasPlayed())
+      .slice(0, vacantLineupSlotsCounts)
+      .forEach((playerResult) => playerResult.callUp());
   }
 
   _getVacantLineupSlotsCount() {

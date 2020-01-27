@@ -71,5 +71,6 @@ async function appendLineups(match) {
 }
 
 module.exports = {
-  syncIfRequired
+  syncIfRequired,
+  sync
 };

@@ -12,6 +12,12 @@ app.get('/', async (req, res) => {
   res.send('Synced');
 });
 
+app.get('/syncRound', async (req, res) => {
+  const { round } = req.query;
+  matchSync.sync(round);
+  res.send('Synced');
+});
+
 app.listen(4004, () => {
   console.log('Data sync service started at 4004');
 });
