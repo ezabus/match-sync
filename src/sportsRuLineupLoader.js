@@ -9,7 +9,10 @@ async function loadRoundData(teamId, roundId) {
 
 function getLineupUrl(teamId, roundId) {
   const zeroRoundUrlSegment = 9622;
-  const roundUrlSegment = zeroRoundUrlSegment + parseInt(roundId, 10);
+  let roundUrlSegment = zeroRoundUrlSegment + parseInt(roundId, 10);
+  if (parseInt(roundId) > 29) {
+    roundUrlSegment = roundUrlSegment + 1;
+  }
   const url = `https://www.sports.ru/fantasy/football/team/points/${teamId}/${roundUrlSegment}.json`;
   return url;
 }
