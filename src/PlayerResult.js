@@ -16,6 +16,7 @@ class PlayerResult {
   }
 
   fromSportsRu(data) {
+    this._season = data.season;
     this._playerId = data.tag_id;
     this._playerName = data.name;
     this._clubId = data.club_id;
@@ -69,8 +70,8 @@ class PlayerResult {
 
   async save() {
     const saveChangesQuery = `
-        INSERT INTO epl.lineups(team_id, player_id, round, player_name, points, is_starter, is_scratch, is_counted, is_captain, club_id, price, position, goals, passes)
-            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+        INSERT INTO epl.lineups(team_id, player_id, round, player_name, points, is_starter, is_scratch, is_counted, is_captain, club_id, price, position, goals, passes, season)
+            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
         ON CONFLICT (team_id, player_id, round) DO UPDATE
             SET points = $5,
                 is_starter = $6,
@@ -81,7 +82,8 @@ class PlayerResult {
                 price = $11,
                 position = $12,
                 goals = $13,
-                passes = $14`;
+                passes = $14,
+                season = $15`;
     const isScratch = !this.hasPlayed();
     return pool.query(saveChangesQuery, [
       this._teamId,
@@ -97,7 +99,8 @@ class PlayerResult {
       this._price,
       this._position,
       this._goals,
-      this._pass
+      this._pass,
+      this._season
     ]);
   }
 }

@@ -2,13 +2,13 @@ const PlayerResult = require('./PlayerResult');
 const Lineup = require('./Lineup');
 const sportsRuLineupLoader = require('./sportsRuLineupLoader');
 
-async function getLineup(teamId, roundId) {
-  const playerResults = await getPlayersResults(teamId, roundId);
+async function getLineup(teamId, roundId, season) {
+  const playerResults = await getPlayersResults(teamId, roundId, season);
   const lineup = new Lineup(playerResults);
   return lineup;
 }
 
-async function getPlayersResults(teamId, roundId) {
+async function getPlayersResults(teamId, roundId, season) {
   const roundData = await sportsRuLineupLoader.loadRoundData(teamId, roundId);
   const playersResultsData = roundData.players;
   const playerResults = playersResultsData.map((data) => {
@@ -16,7 +16,8 @@ async function getPlayersResults(teamId, roundId) {
       teamId,
       round: roundId
     });
-    playerResult.fromSportsRu(data);
+    const dataWithSeason = {...data, season: season}
+    playerResult.fromSportsRu(dataWithSeason);
     return playerResult;
   });
   return playerResults;

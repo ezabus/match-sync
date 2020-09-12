@@ -10,6 +10,7 @@ class Match {
     this.homeTeamId = settings.homeTeamId;
     this.awayTeamId = settings.awayTeamId;
     this.round = settings.round;
+    this.season = settings.season;
     this.setHomeLineup(settings.homeLineup);
     this.setAwayLineup(settings.awayLineup);
   }

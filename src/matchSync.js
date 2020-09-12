@@ -29,10 +29,12 @@ async function isSyncRequired() {
 async function sync(roundParameter) {
   console.log('syncing data');
   let roundNumber = roundParameter;
+  const curRoundData = (await axios.get('http://localhost:4000/currentRound/detailed')).data;
+  const season = curRoundData.season;
   if (!roundParameter) {
-    roundNumber = (await axios.get('http://localhost:4000/currentRound')).data;
+    roundNumber = curRoundData.round;
   }
-  const matches = await currentRoundMatchesWithLineups(roundNumber);
+  const matches = await currentRoundMatchesWithLineups(roundNumber, season);
   matches.forEach(async (matchP) => {
     const match = await matchP;
     match.saveResults();
@@ -46,25 +48,26 @@ async function updateLastSyncDate() {
   return pool.query(updateLastSync, [new Date()]);
 }
 
-async function currentRoundMatchesWithLineups(roundNumber) {
-  const matches = await currentRoundMatchesRecords(roundNumber);
+async function currentRoundMatchesWithLineups(roundNumber, season) {
+  const matches = await currentRoundMatchesRecords(roundNumber, season);
   return matches.map(appendLineups);
 }
 
-async function currentRoundMatchesRecords(roundNumber) {
-  const matchData = await database.getMatchesForRound(roundNumber);
+async function currentRoundMatchesRecords(roundNumber, season) {
+  const matchData = await database.getMatchesForRound(roundNumber, season);
   return matchData.map((match) => new Match({
     round: roundNumber,
     homeTeamId: match.h_id,
     awayTeamId: match.a_id,
     homeTeamName: match.h_name,
-    awayTeamName: match.a_name
+    awayTeamName: match.a_name,
+    season: season
   }));
 }
 
 async function appendLineups(match) {
-  const homeTeamLineup = await lineupCollector(match.homeTeamId, match.round);
-  const awayTeamLineup = await lineupCollector(match.awayTeamId, match.round);
+  const homeTeamLineup = await lineupCollector(match.homeTeamId, match.round, match.season);
+  const awayTeamLineup = await lineupCollector(match.awayTeamId, match.round, match.season);
   match.homeLineup = homeTeamLineup;
   match.awayLineup = awayTeamLineup;
   return match;

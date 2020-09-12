@@ -49,12 +49,12 @@ async function saveMatch(match) {
   await pool.query(insertMatch, [match.homeId, match.awayId, match.round]);
 }
 
-async function getMatchesForRound(round) {
+async function getMatchesForRound(round, season) {
   const selectMatchesForRound = `
         SELECT * FROM epl.matches_with_names
-            WHERE round = $1
+            WHERE round = $1 AND season = $2
             ORDER BY id`;
-  const res = await pool.query(selectMatchesForRound, [round]);
+  const res = await pool.query(selectMatchesForRound, [round, season]);
   return res.rows;
 }
 
@@ -125,6 +125,12 @@ async function getPlayedClubsOfCurrentRound() {
   return playedClubs;
 }
 
+async function getTeamLink(teamId) {
+  const selectQuery = 'SELECT link FROM epl.teams WHERE id = $1';
+  const link = (await pool.query(selectQuery, [teamId])).rows[0].link;
+  return link;
+}
+
 module.exports = {
   saveTeam,
   getClubNameToIdMap,
@@ -139,5 +145,6 @@ module.exports = {
   getRoundStats,
   getSeasonStats,
   savePlayerStats,
-  getPlayedClubsOfCurrentRound
+  getPlayedClubsOfCurrentRound,
+  getTeamLink
 };
