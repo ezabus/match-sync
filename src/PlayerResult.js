@@ -69,6 +69,11 @@ class PlayerResult {
   }
 
   async save() {
+    try {
+      this._saveOrUpdateStats();
+    } catch (err) {
+      console.log(`failed to save stats playerId:${this._playerId}, round: ${this._round}`)
+    }
     const saveChangesQuery = `
         INSERT INTO epl.lineups(team_id, player_id, round, player_name, points, is_starter, is_scratch, is_counted, is_captain, club_id, price, position, goals, passes, season)
             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
@@ -102,6 +107,29 @@ class PlayerResult {
       this._pass,
       this._season
     ]);
+  }
+
+  async _saveOrUpdateStats () {
+    const tagId = parseInt(this._playerId);
+    const round = parseInt(this._round);
+    const points = parseInt(this._points);
+    const goals = parseInt(this._goals);
+    const passes = parseInt(this._pass);
+    const season = this._season;
+    const query = `
+      INSERT INTO epl.player_stats(
+        player_id,
+        round,
+        points,
+        season,
+        goals,
+        passes)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT ON CONSTRAINT unique_player_stats DO UPDATE SET
+        points = $3,
+        goals = $5,
+        passes = $6;`;
+    return pool.query(query, [tagId, round, points, season, goals, passes]);
   }
 }
 
