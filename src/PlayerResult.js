@@ -112,7 +112,10 @@ class PlayerResult {
   async _saveOrUpdateStats () {
     const tagId = parseInt(this._playerId);
     const round = parseInt(this._round);
-    const points = parseInt(this._points);
+    let points = parseInt(this._points);
+    if (this._isCaptain) {
+      points = points / 2;
+    }
     const goals = parseInt(this._goals);
     const passes = parseInt(this._pass);
     const season = this._season;
