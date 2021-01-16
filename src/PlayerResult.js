@@ -113,7 +113,7 @@ class PlayerResult {
     const tagId = parseInt(this._playerId);
     const round = parseInt(this._round);
     let points = parseInt(this._points);
-    if (this._isCaptain) {
+    if (this._isCaptain === "1") {
       points = points / 2;
     }
     const goals = parseInt(this._goals);
