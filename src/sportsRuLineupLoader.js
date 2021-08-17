@@ -13,7 +13,7 @@ async function teamUrlSegmentById(teamId) {
 }
 
 async function getLineupUrl(teamId, roundId) {
-  const zeroRoundUrlSegment = 11318;
+  const zeroRoundUrlSegment = 11317;
   const teamUrlSegment = await teamUrlSegmentById(teamId);
   let roundUrlSegment = zeroRoundUrlSegment + parseInt(roundId, 10);
   const url = `https://www.sports.ru/fantasy/football/team/points/${teamUrlSegment}/${roundUrlSegment}.json`;
